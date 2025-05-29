@@ -6,27 +6,39 @@ import SortCss from 'postcss-sort-media-queries';
 
 export default defineConfig(({ command }) => {
   return {
+    
+    base: '/goit-js-hw-11/',
+
     define: {
       [command === 'serve' ? 'global' : '_global']: {},
     },
+
     root: 'src',
+
     build: {
       sourcemap: true,
+
+      
+      outDir: '../dist',
+      emptyOutDir: true,
+
       rollupOptions: {
+       
         input: glob.sync('./src/*.html'),
+
         output: {
+          
           manualChunks(id) {
             if (id.includes('node_modules')) {
               return 'vendor';
             }
           },
-          entryFileNames: chunkInfo => {
-            if (chunkInfo.name === 'commonHelpers') {
-              return 'commonHelpers.js';
-            }
-            return '[name].js';
-          },
-          assetFileNames: assetInfo => {
+
+          
+          entryFileNames: '[name]-[hash].js',
+
+          
+          assetFileNames: (assetInfo) => {
             if (assetInfo.name && assetInfo.name.endsWith('.html')) {
               return '[name].[ext]';
             }
@@ -34,15 +46,17 @@ export default defineConfig(({ command }) => {
           },
         },
       },
-      outDir: '../dist',
-      emptyOutDir: true,
     },
+
     plugins: [
+      
       injectHTML(),
-      FullReload(['./src/**/**.html']),
-      SortCss({
-        sort: 'mobile-first',
-      }),
+
+      
+      FullReload(['./src/**/*.html']),
+
+    
+      SortCss({ sort: 'mobile-first' }),
     ],
   };
 });
